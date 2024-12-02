@@ -184,6 +184,7 @@ def load_video_frames(
     """
     is_bytes = isinstance(video_path, bytes)
     is_str = isinstance(video_path, str)
+    is_images = isinstance(video_path, list)
     is_mp4_path = is_str and os.path.splitext(video_path)[-1] in [".mp4", ".MP4"]
     if is_bytes or is_mp4_path:
         return load_video_frames_from_video_file(
@@ -204,10 +205,55 @@ def load_video_frames(
             async_loading_frames=async_loading_frames,
             compute_device=compute_device,
         )
+    elif is_images:
+        return load_video_frames_from_PIL_images(
+            video_path,
+            image_size=image_size,
+            offload_video_to_cpu=offload_video_to_cpu,
+            img_mean=img_mean,
+            img_std=img_std,
+            async_loading_frames=async_loading_frames,
+            compute_device=compute_device,
+        )
     else:
         raise NotImplementedError(
             "Only MP4 video and JPEG folder are supported at this moment"
         )
+
+def _image_to_tensor(img_pil, image_size):
+    img_np = np.array(img_pil.convert("RGB").resize((image_size, image_size)))
+    if img_np.dtype == np.uint8:  # np.uint8 is expected for JPEG images
+        img_np = img_np / 255.0
+    else:
+        raise RuntimeError(f"Unknown image dtype: {img_np.dtype} on {img_path}")
+    img = torch.from_numpy(img_np).permute(2, 0, 1)
+    video_width, video_height = img_pil.size  # the original video size
+    return img, video_height, video_width
+
+def load_video_frames_from_PIL_images(
+    pil_images,
+    image_size,
+    offload_video_to_cpu,
+    img_mean=(0.485, 0.456, 0.406),
+    img_std=(0.229, 0.224, 0.225),
+    async_loading_frames=False,
+    compute_device=torch.device("cuda"),
+):
+    num_frames = len(pil_images)
+    img_mean = torch.tensor(img_mean, dtype=torch.float32)[:, None, None]
+    img_std = torch.tensor(img_std, dtype=torch.float32)[:, None, None]
+
+    images = torch.zeros(num_frames, 3, image_size, image_size, dtype=torch.float32)
+    for n, pil_img in enumerate(tqdm(pil_images, desc="frame loading (PIL)")):
+        images[n], video_height, video_width = _image_to_tensor(pil_img, image_size)
+    if not offload_video_to_cpu:
+        images = images.to(compute_device)
+        img_mean = img_mean.to(compute_device)
+        img_std = img_std.to(compute_device)
+    # normalize by mean and std
+    images -= img_mean
+    images /= img_std
+    return images, video_height, video_width
 
 
 def load_video_frames_from_jpg_images(
