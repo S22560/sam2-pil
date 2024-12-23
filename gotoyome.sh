@@ -1,0 +1,6 @@
+# /home/nakata/miniconda3/envs/rmbg/bin/python imgutils_propagate_folder.py --image_dir="/mnt/d/アニメデータ/cogvideox_train/57_scene" --output_dir="/mnt/d/アニメデータ/cogvideox_train/57_scene_char"
+# /home/nakata/miniconda3/envs/rmbg/bin/python imgutils_propagate_folder.py --image_dir="/mnt/d/アニメデータ/cogvideox_train/58_scene" --output_dir="/mnt/d/アニメデータ/cogvideox_train/58_scene_char"
+# /home/nakata/miniconda3/envs/rmbg/bin/python imgutils_propagate_folder.py --image_dir="/mnt/d/アニメデータ/cogvideox_train/59_scene" --output_dir="/mnt/d/アニメデータ/cogvideox_train/59_scene_char"
+# /home/nakata/miniconda3/envs/rmbg/bin/python imgutils_propagate_folder.py --image_dir="/mnt/d/アニメデータ/cogvideox_train/510_scene" --output_dir="/mnt/d/アニメデータ/cogvideox_train/510_scene_char"
+/home/nakata/miniconda3/envs/rmbg/bin/python imgutils_propagate_folder.py --image_dir="/mnt/d/アニメデータ/cogvideox_train/511_scene" --output_dir="/mnt/d/アニメデータ/cogvideox_train/511_scene_char"
+# /home/nakata/miniconda3/envs/rmbg/bin/python imgutils_propagate_folder.py --image_dir="/mnt/d/アニメデータ/cogvideox_train/512_scene" --output_dir="/mnt/d/アニメデータ/cogvideox_train/512_scene_char"

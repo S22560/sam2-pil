@@ -1,0 +1,1 @@
+sudo python imgutils_propagate_folder.py --image_dir="/data/scene/sds" --output_dir="/data/scene_char/sds"
