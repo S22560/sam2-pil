@@ -72,6 +72,7 @@ def sam2inference(images,image_paths,boxes):
             else:
                 original_img = image
                 combined_mask = np.zeros(original_img.shape[:2])
+                output_img = np.concatenate([original_img,combined_mask.reshape(*combined_mask.shape,1)*255],axis=-1).astype(np.uint8)
             if i>1:
                 channel_mse = np.max((current_frame-pre_frame)**2,axis=-1)>100
                 alpha = (combined_mask+pre_frame_alpha)>0
@@ -126,6 +127,8 @@ else:
 
 # ==== 各シーンごとに全フレームを保存 ====
 for scene_index, scene in enumerate(scene_list):
+    if scene_index <= last_generated_data:
+        continue
     scene_start_frame = scene[0].get_frames()
     scene_end_frame = scene[1].get_frames()-1
     print(f"シーン{scene_index+1}: 開始フレーム {scene_start_frame}, 終了フレーム {scene_end_frame}")
